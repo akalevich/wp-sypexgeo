@@ -24,7 +24,7 @@ The plugin allows you to select a local database or use HTTP-request to sypexgeo
 
 To specify a list of countries: [GeoCountry in=Belarus,Russia]Hello Belarus,Russia![/GeoCountry] 
 To specify a list of regions: [GeoRegion in=Moscow]Hello Moscow Region![/GeoRegion]
-To specify a list of cities: [GeoCity in=Minsk,Brest]Hello Minsk,Brest![/GeoCity]
+To specify a list of cities: [GeoCity in=Minsk,Brest,Kiev]Hello Minsk,Brest,Kiev![/GeoCity]
 If you want exclude some countries (regions, cities) use "out": [GeoRegion out=Minsk,Brest]Hello all, except Minsk,Brest![/GeoRegion]
 
 == Changelog ==
