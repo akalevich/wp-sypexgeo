@@ -120,7 +120,7 @@
 		$data['region'] = strtolower($ipinfo['region'][NAME]);
 		$data['city'] = strtolower($ipinfo['city'][NAME]);
 
-		return $res;
+		return $data;
 	}
 
 	function getRemInfo() {
