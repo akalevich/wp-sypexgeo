@@ -141,6 +141,18 @@
 
 		return $data;
 	}
+	
+	register_activation_hook(__FILE__, 'wp_sypexgeo_activation');
+	register_deactivation_hook(__FILE__, 'wp_sypexgeo_deactivation');
+	 
+	function wp_sypexgeo_activation() {
+		 update_option('sgeo_language', 'en');
+		 update_option('sgeo_dbase', 'loc');
+	}
+	 
+	function wp_sypexgeo_deactivation() {
+	    
+	}
 
 	/*  Copyright 2015  Alex Kalevich  (email: r_alex_b@tut.by)
 
