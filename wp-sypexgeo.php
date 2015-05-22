@@ -4,7 +4,7 @@
 	Description: Sypex Geo plugin for Wordpress
 	Version: 1.0
 	Author: Alex Kalevich
-	Plugin URI: http://thewordpress.net/plugins/geotargeting/
+	Plugin URI: https://github.com/akalevich/wp-sypexgeo
 	*/
 
 	// Сurrent directory
