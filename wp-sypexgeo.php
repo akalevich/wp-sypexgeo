@@ -15,14 +15,15 @@
 	// Path to Data File
 	define("GEO_DATA", dirname(__FILE__) . "/include/SxGeoCity.dat");
 	define("GEO_ADMIN", dirname(__FILE__) . "/wp-sypexgeo-admin.php");
+	
+	define("GEOTARGETING_COUNTY", "GeoCountry");
+	define("GEOTARGETING_REGION", "GeoRegion");
+	define("GEOTARGETING_CITY", "GeoCity");
 
 	add_filter('the_content', 'geotargeting_filter');
 	add_filter('the_content_rss', 'geotargeting_filter');
 	add_filter('the_excerpt', 'geotargeting_filter');
 	add_filter('the_excerpt_rss', 'geotargeting_filter');
-	define("GEOTARGETING_COUNTY", "GeoCountry");
-	define("GEOTARGETING_REGION", "GeoRegion");
-	define("GEOTARGETING_CITY", "GeoCity");
 
 	$language = get_option('sgeo_language');
 	if ($language == 'en') {
