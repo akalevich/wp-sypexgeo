@@ -69,6 +69,6 @@
 		<i>Для указания списка стран:</i> <code>[GeoCountry in=Belarus,Russia]Привет Belarus,Russia![/GeoCountry]</code></br>
 		<i>Для указания списка регионов:</i> <code>[GeoRegion in=Moscow]Привет Moscow Region![/GeoRegion]</code></br>
 		<i>Для указания списка городов:</i> <code>[GeoCity in=Минск,Брест]Привет Минск,Брест![/GeoCity]</code></br>
-		<i>Если вы хотите выбрасть страны (регионы, города) за исклиючением указанных, используйте "out":</i> <code>[GeoRegion out=Minsk,Brest]Привет всем, кроме Minsk,Brest![/GeoRegion]</code>
+		<i>Если вы хотите выбрасть страны (регионы, города) за исключением указанных, используйте "out":</i> <code>[GeoRegion out=Minsk,Brest]Привет всем, кроме Minsk,Brest![/GeoRegion]</code>
 	</p>
 </div>
