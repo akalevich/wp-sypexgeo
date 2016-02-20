@@ -3,7 +3,7 @@ Contributors: Alex Kalevich
 Tags: geotargeting
 Requires at least: 1.5
 Tested up to: 4.2.2
-Stable tag: 1.0
+Stable tag: 2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,7 +13,7 @@ Sypex Geo plugin for Wordpress
 
 Sypex Geo - product for location by IP address. Received IP-address, Sypex Geo provides information about the location of the visitor - a country, region, city, geographic coordinates.
 This plugin use Sypex Geo API in local database version.
-The plugin allows you to select a local database or use HTTP-request to sypexgeo.net database, select language of country names (EN/RU)
+The plugin allows you to select a local database, GET query and Cookie or use HTTP-request to sypexgeo.net database, select language of country names (EN/RU)
 
 == Installation ==
 
@@ -25,9 +25,16 @@ The plugin allows you to select a local database or use HTTP-request to sypexgeo
 To specify a list of countries: [GeoCountry in=Belarus,Russia]Hello Belarus,Russia![/GeoCountry] 
 To specify a list of regions: [GeoRegion in=Moscow]Hello Moscow Region![/GeoRegion]
 To specify a list of cities: [GeoCity in=Minsk,Brest,Kiev]Hello Minsk,Brest,Kiev![/GeoCity]
+To specify a list of cities: [geotext in=Yekaterinburg text="hello Yekaterinburg"]
 If you want exclude some countries (regions, cities) use "out": [GeoRegion out=Minsk,Brest]Hello all, except Minsk,Brest![/GeoRegion]
 
 == Changelog ==
+
+= 1.0 =
+* Added geotargeting using GET and COOKIE
+* Added geotext shortcode
+* Replaced regexp in add_shortcode
+* Added post button
 
 = 0.4 =
 * Added geotargeting using remote database

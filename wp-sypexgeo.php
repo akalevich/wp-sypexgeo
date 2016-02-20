@@ -2,7 +2,7 @@
 	/*
 	Plugin Name: WP SypexGeo
 	Description: Sypex Geo plugin for Wordpress
-	Version: 1.0
+	Version: 2.0
 	Author: Alex Kalevich
 	Plugin URI: https://github.com/akalevich/wp-sypexgeo
 	*/
@@ -20,10 +20,27 @@
 	define("GEOTARGETING_REGION", "GeoRegion");
 	define("GEOTARGETING_CITY", "GeoCity");
 
-	add_filter('the_content', 'geotargeting_filter');
-	add_filter('the_content_rss', 'geotargeting_filter');
-	add_filter('the_excerpt', 'geotargeting_filter');
-	add_filter('the_excerpt_rss', 'geotargeting_filter');
+    if (!defined( 'GEOTARGETING_PLUGIN_URL' ) ) {
+        define( 'GEOTARGETING_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+    }
+	if (!defined( 'GEOTARGETING_PLUGIN_CSS_URL' )) {
+	    define( 'GEOTARGETING_PLUGIN_CSS_URL', GEOTARGETING_PLUGIN_URL . 'css/' );
+    }
+    if (!defined( 'GEOTARGETING_PLUGIN_IMAGES_URL' )) {
+        define( 'GEOTARGETING_PLUGIN_IMAGES_URL', GEOTARGETING_PLUGIN_URL . 'images/' );
+    }
+    if (!defined( 'GEOTARGETING_PLUGIN_JS_URL' )) {
+        define( 'GEOTARGETING_PLUGIN_JS_URL', GEOTARGETING_PLUGIN_URL . 'js/' );
+    }
+
+    // Add Shortcode
+    add_shortcode('GeoCity', 'shortcode_geo');
+    add_shortcode('GeoRegion', 'shortcode_geo');
+    add_shortcode('GeoCountry', 'shortcode_geo');
+    add_shortcode('geotext', 'shortcode_geoText');
+
+    // кнопка в редакторе
+    require_once(dirname(__FILE__) . "/wp-sypexgeo-button.php");
 
 	$language = get_option('sgeo_language');
 	if ($language == 'en') {
@@ -32,72 +49,66 @@
 		define("NAME", "name_ru");
 	}
 
-	function geotargeting_filter($s) {
+	function getIpData() {
+	    // Достаем текущий город/регион
+        $base_type = get_option('sgeo_dbase');
+        if ($base_type == 'loc') {
+            $ipdata = getLocInfo();
+        } elseif ($base_type == 'rm') {
+            $ipdata = getRemInfo();
+        } elseif ($base_type == 'query') {
+            $ipdata = getQueryInfo();
+        }
 
-		//parse Country
-		preg_match_all("#\[" . GEOTARGETING_COUNTY . "\s*(in|out)=([^\]]+)\](.*?)\[/" . GEOTARGETING_COUNTY . "\]#isu", $s, $country);
-
-		//parse Country
-		preg_match_all("#\[" . GEOTARGETING_REGION . "\s*(in|out)=([^\]]+)\](.*?)\[/" . GEOTARGETING_REGION . "\]#isu", $s, $region);
-
-		//parse Country
-		preg_match_all("#\[" . GEOTARGETING_CITY . "\s*(in|out)=([^\]]+)\](.*?)\[/" . GEOTARGETING_CITY . "\]#isu", $s, $city);
-
-		if (empty($country) && empty($region) && empty($city)) {
-			return $s;
-		}
-
-		$base_type = get_option('sgeo_dbase');
-		if ($base_type == 'loc') {
-			$ipdata = getLocInfo();
-		} elseif ($base_type == 'rm') {
-			$ipdata = getRemInfo();
-		}
-
-		if (!empty($country)) {
-			foreach ($country[0] as $i => $raw) {
-				$type = strtolower($country[1][$i]);
-				$countries = strtolower(trim(str_replace(array("\"", "'", "\n", "\r", "\t", " "), "", $country[2][$i])));
-				$content = $country[3][$i];
-				$countries = explode(",", $countries);
-				$replacement = "";
-				if ((($type == "in") && in_array($ipdata['country'], $countries)) || (($type == "out") && !in_array($ipdata['country'], $countries))) {
-					$replacement = $content;
-				}
-				$s = str_replace($raw, $replacement, $s);
-			}
-		}
-
-		if (!empty($region)) {
-			foreach ($region[0] as $i => $raw) {
-				$type = strtolower($region[1][$i]);
-				$regions = strtolower(trim(str_replace(array("\"", "'", "\n", "\r", "\t"), "", $region[2][$i])));
-				$content = $region[3][$i];
-				$regions = explode(",", $regions);
-				$replacement = "";
-				if ((($type == "in") && in_array($ipdata['region'], $regions)) || (($type == "out") && !in_array($ipdata['region'], $regions))) {
-					$replacement = $content;
-				}
-				$s = str_replace($raw, $replacement, $s);
-			}
-		}
-
-		if (!empty($city)) {
-			foreach ($city[0] as $i => $raw) {
-				$type = strtolower($city[1][$i]);
-				$cities = strtolower(trim(str_replace(array("\"", "'", "\n", "\r", "\t", " "), "", $city[2][$i])));
-				$content = $city[3][$i];
-				$cities = explode(",", $cities);
-				$replacement = "";
-				if ((($type == "in") && in_array($ipdata['city'], $cities)) || (($type == "out") && !in_array($ipdata['city'], $cities))) {
-					$replacement = $content;
-				}
-				$s = str_replace($raw, $replacement, $s);
-			}
-		}
-
-		return $s;
+        return $ipdata;
 	}
+
+	/**
+	 * Add Shortcode for WP
+	 */
+    function shortcode_geo($atts, $content = null, $tag) {
+        $ipdata = getIpData();
+
+        if ($tag === 'GeoCity') {
+            $type = 'city';
+        } elseif ($tag === 'GeoRegion') {
+            $type = 'region';
+        } else {
+            $type = 'country';
+        }
+
+        if (isset($atts['in'])) {
+            $isCurrent = strpos(strtolower($atts['in']), $ipdata[$type]);
+        } else {
+            $isCurrent = strpos(strtolower($atts['out']), $ipdata[$type]) === false;
+        }
+
+        if (isset($content) && $isCurrent !== false) {
+            if (has_shortcode($content, 'GeoCity') || has_shortcode($content, 'GeoRegion') || has_shortcode($content, 'GeoCountry') || has_shortcode($content, 'geotext')) {
+                return do_shortcode($content);
+            }
+
+            return trim($content);
+        }
+
+        return null;
+    }
+
+    function shortcode_geoText($atts, $content = null) {
+        $ipdata = getIpData();
+
+        if (isset($atts['in'])) {
+            $isCurrentCity = strpos($atts['in'], $ipdata['city']);
+        } else {
+            $isCurrentCity = strpos($atts['out'], $ipdata['city']) === false;
+        }
+
+        if (isset($atts['text']) && $isCurrentCity !== false) {
+            return $atts['text'];
+        }
+
+        return null;
+    }
 
 	function sgeo_options_page() {
 		include(GEO_ADMIN);
@@ -142,6 +153,34 @@
 
 		return $data;
 	}
+
+	function getQueryInfo() {
+        $data = array();
+
+        if (isset($_GET['city'])) {
+            $city = $_GET['city'];
+        } elseif (isset($_COOKIE['city'])) {
+            $city = $_COOKIE['city'];
+        }
+
+        if (isset($_GET['region'])) {
+            $region = $_GET['region'];
+        } elseif (isset($_COOKIE['region'])) {
+            $region = $_COOKIE['region'];
+        }
+
+        if (isset($_GET['country'])) {
+            $country = $_GET['country'];
+        } elseif (isset($_COOKIE['country'])) {
+            $country = $_COOKIE['country'];
+        }
+
+        $data['city'] = strtolower($city);
+        $data['region'] = strtolower($region);
+        $data['country'] = strtolower($country);
+
+        return $data;
+    }
 	
 	register_activation_hook(__FILE__, 'wp_sypexgeo_activation');
 	register_deactivation_hook(__FILE__, 'wp_sypexgeo_deactivation');
