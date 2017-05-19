@@ -2,13 +2,14 @@
 
 This plug-in to determine the location by ip using Sypex Geo. 
 This plugin use Sypex Geo API in local database version.
-The plugin allows you to select a local database or use HTTP-request to sypexgeo.net database, select language of country names (EN/RU)
+The plugin allows you to select a local database, GET query and Cookie or use HTTP-request to sypexgeo.net database, select language of country names (EN/RU)
 
 Usage
 -----
 * *To specify a list of countries:* `[GeoCountry in=Belarus,Russia]Hello Belarus,Russia![/GeoCountry]`
 * *To specify a list of regions:* `[GeoRegion in=Moscow]Hello Moscow Region![/GeoRegion]`
 * *To specify a list of cities:*  `[GeoCity in=Minsk,Brest,Kiev]Hello Minsk,Brest,Kiev![/GeoCity]`
+* *To specify a list of cities:*  `[geotext in=Yekaterinburg text="Hello Yekaterinburg"]`
 * *If you want exclude some countries (regions, cities) use "out":* `[GeoRegion out=Minsk,Brest]Hello all, except Minsk,Brest![/GeoRegion]`
  
   *Example:* `Добро пожаловать в WordPress. Это ваша первая запись. Отредактируйте или удалите её, затем пишите! Наши контакты: 
